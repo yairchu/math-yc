@@ -3,10 +3,13 @@ module Math.Modular where
 data NumberMod a = NumberMod
     { remainder :: a
     , modulus :: a
-    } deriving (Eq, Show)
+    } deriving Eq
 
 (%) :: Integral a => a -> a -> NumberMod a
 x % m = NumberMod (mod x m) m
+
+instance Show a => Show (NumberMod a) where
+    show (NumberMod x m) = show x ++ "%" ++ show m
 
 inverse :: Integral a => NumberMod a -> NumberMod a
 inverse (NumberMod x m) =
@@ -22,12 +25,7 @@ inverse (NumberMod x m) =
 instance Integral a => Num (NumberMod a) where
     NumberMod x0 m0 + NumberMod x1 m1 = (x0 + x1) % gcd m0 m1
     NumberMod x0 m0 * NumberMod x1 m1 = (x0 * x1) % gcd m0 m1
-    -- Functions that we must only implement because Num kinda sucks
-    abs = id
-    fromInteger = const $ NumberMod 0 1
-    signum = const 1
+    negate (NumberMod x m) = (-x) % m
 
 instance Integral a => Fractional (NumberMod a) where
     dividend / divisor = dividend * inverse divisor
-    -- Functions that we must only implement because Fractional kinda sucks
-    fromRational = const $ NumberMod 0 1
